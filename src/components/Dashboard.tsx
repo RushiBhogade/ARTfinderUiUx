@@ -1,36 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // for navigation
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Sparkles } from "lucide-react";
 
 const Dashboard: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showResults, setShowResults] = useState(false);
 
-  // State variables for form inputs
   const [businessName, setBusinessName] = useState("");
   const [usp, setUsp] = useState("");
   const [category, setCategory] = useState("");
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [errors, setErrors] = useState({ businessName: "", uspCategory: "" });
 
-  const navigate = useNavigate(); // Initialize navigate
-
-  // Enable or disable Analyze button based on form validation
-  useEffect(() => {
-    if (businessName && (usp || category)) {
-      setIsButtonEnabled(true);
-      setErrors({ ...errors, uspCategory: "" });
-    } else {
-      setIsButtonEnabled(false);
-    }
-  }, [businessName, usp, category, errors]);
+  const navigate = useNavigate();
 
   const handleAnalyze = () => {
     setIsAnalyzing(true);
     setTimeout(() => {
       setIsAnalyzing(false);
-      setShowResults(true);
-      // Navigate to Impact Insights screen after analysis
       navigate("/impact-insights");
     }, 2000);
   };
@@ -42,7 +27,10 @@ const Dashboard: React.FC = () => {
     if (!businessName) {
       setErrors({ ...errors, businessName: "Business name is required" });
     } else if (!usp && !category) {
-      setErrors({ ...errors, uspCategory: "Either USP or category is required" });
+      setErrors({
+        ...errors,
+        uspCategory: "Either USP or category is required",
+      });
     } else {
       handleAnalyze();
     }
@@ -78,7 +66,8 @@ const Dashboard: React.FC = () => {
           <div className="mb-6">
             {/* USP Input */}
             <label htmlFor="usp" className="block text-lg mb-2">
-              Unique Selling Proposition (USP) <span className="text-gray-500">(Optional)</span>
+              Unique Selling Proposition (USP){" "}
+              <span className="text-gray-500">(Optional)</span>
             </label>
             <input
               type="text"
@@ -93,7 +82,8 @@ const Dashboard: React.FC = () => {
           <div className="mb-6">
             {/* Category Input */}
             <label htmlFor="category" className="block text-lg mb-2">
-              Business Category <span className="text-gray-500">(Optional)</span>
+              Business Category{" "}
+              <span className="text-gray-500">(Optional)</span>
             </label>
             <input
               type="text"
@@ -114,26 +104,28 @@ const Dashboard: React.FC = () => {
           <div className="text-center mb-6">
             <button
               type="submit"
-              disabled={!isButtonEnabled || isAnalyzing}
+             
               className={`${
-                isAnalyzing || !isButtonEnabled
+                isAnalyzing
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-pink-500 hover:bg-pink-600"
               } border-4 border-black px-8 py-2 font-bold flex items-center gap-2`}
             >
-              {isAnalyzing ? "Analyzing..." : <><Search /> Analyze Impact</>}
+              {isAnalyzing ? (
+                "Analyzing..."
+              ) : (
+                <>
+                  <Search /> Analyze Impact
+                </>
+              )}
             </button>
+            <div className="text-center text-gray-500 py-2">
+              Enter your business details and click "Analyze Impact" to see
+              insights.
+            </div>
           </div>
         </form>
       </div>
-
-      {showResults ? (
-        <div> {/* Add Result Components Here */} </div>
-      ) : (
-        <div className="text-center text-gray-500 py-12">
-          Enter your business details and click "Analyze Impact" to see insights.
-        </div>
-      )}
     </div>
   );
 };
