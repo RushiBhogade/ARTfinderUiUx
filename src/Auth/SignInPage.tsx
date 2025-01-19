@@ -1,22 +1,41 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { postData } from "../apiService";
+
 
 const SignInPage: React.FC = () => {
-  const [email, setEmail] = useState("");
+  const [username, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); // Hook to redirect after login
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simulate an authentication process, replace with actual API call
-    if (email === "user@gmail.com" && password === "1234") {
-      // Store authentication token or user info in AsyncStorage
-      await AsyncStorage.setItem("isAuthenticated", "true");
-      navigate("/Sidebar"); // Redirect to the dashboard 
-    } else {
-      alert("Invalid credentials");
+    const userData = { username, password };
+
+    try {
+      // Call the API for sign-in
+      const response = await postData('login', userData);
+
+      if (response.access_token) {
+        // Store authentication token (JWT) and user info in AsyncStorage
+        await AsyncStorage.setItem("email", username);
+        await AsyncStorage.setItem("password", password);
+        await AsyncStorage.setItem("isAuthenticated", "true");
+        await AsyncStorage.setItem("isStarted", "true");
+        await AsyncStorage.setItem("jwt_token", response.access_token);
+
+ 
+
+        alert("Login successful");
+        window.location.reload(); // Refresh the page
+      } else {
+        alert("Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Sign-in error:", error);
+      alert("An error occurred while signing in. Please try again.");
     }
   };
 
@@ -25,7 +44,7 @@ const SignInPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 bg-white">
+    <div className="flex flex-1 min-h-screen flex items-center justify-center p-8 bg-white">
       <div className="max-w-md w-full bg-white border-8 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] p-10 transform hover:translate-y-2 transition-all">
         <h1 className="text-5xl font-extrabold text-black mb-6 text-center">Sign In</h1>
 
@@ -34,7 +53,7 @@ const SignInPage: React.FC = () => {
             <label className="block text-black font-semibold">Email</label>
             <input
               type="email"
-              value={email}
+              value={username}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-4 border-4 border-black bg-white text-black rounded-md focus:outline-none focus:border-yellow-500"
               required

@@ -1,17 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import the navigate hook
+import { postData } from "../apiService";
+// Import your postData function
 
 const SignUpPage: React.FC = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); // Hook to redirect to sign-in page
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign-up logic here
-    // You can store the user info or authentication token in AsyncStorage or make an API call
-    alert("Account created successfully!");
-    navigate("/signin"); // Redirect to the SignIn page after successful sign-up
+
+    const userData = { username, password };
+
+    try {
+      // Make API call to sign up the user
+      const response = await postData('signup', userData);
+      console.log(response)
+      if (response.msg === "User created successfully") {
+        alert("Account created successfully!");
+        navigate("/signin"); // Redirect to the SignIn page after successful sign-up
+      } else {
+        alert("Sign-up failed! Please try again.");
+      }
+    } catch (error) {
+      console.error("Sign-up error:", error);
+      alert("An error occurred while creating the account.");
+    }
   };
 
   const handleSignInRedirect = () => {
@@ -28,8 +43,8 @@ const SignUpPage: React.FC = () => {
             <label className="block text-black font-semibold">Email</label>
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full p-4 border-4 border-black bg-white text-black rounded-md focus:outline-none focus:border-yellow-500"
               required
             />

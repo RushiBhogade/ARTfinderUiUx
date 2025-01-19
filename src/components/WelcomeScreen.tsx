@@ -1,5 +1,4 @@
 import React from "react";
-import { Heart, Shield, Globe, ArrowRight } from "lucide-react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface WelcomeScreenProps {
@@ -7,12 +6,9 @@ interface WelcomeScreenProps {
 }
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
-  
   const handleStart = async () => {
     try {
-      // Set a flag in AsyncStorage to indicate the start action
-      await AsyncStorage.setItem('isStarted', 'true');
-      // Trigger the onStart function if provided
+      await AsyncStorage.setItem("isStarted", "true");
       onStart();
     } catch (error) {
       console.error("Error saving to AsyncStorage: ", error);
@@ -20,93 +16,88 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 bg-white">
-      <div className="max-w-4xl w-full bg-white border-8 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] p-10 transform hover:translate-y-2 transition-all">
-        {/* Header Section */}
-        <div className="flex items-center gap-6 mb-12">
-          <h1 className="text-7xl font-extrabold text-black tracking-widest bg-transparent border-b-4 border-yellow-500 inline-block p-4 transform">
-            ART FINDER
+    <div className="min-h-screen bg-yellow-300">
+      {/* Hero Section */}
+      <div className="h-screen flex flex-col p-8 border-b-8 border-black">
+        <div className="flex-1 flex flex-col justify-center items-center">
+          <h1 className="text-8xl md:text-9xl font-black text-black mb-8 tracking-tighter">
+            HOOK
+            <span className="bg-purple-600 text-white px-4">SMITH</span>
           </h1>
-          <div className="text-2xl font-bold text-black tracking-wide py-2 px-6 bg-transparent border-2 border-yellow-500">
-            Tech for Good
+          <div className="bg-black text-white px-8 py-4 text-2xl font-bold transform -rotate-2">
+            #TECH FOR GOOD
           </div>
         </div>
-
-        {/* Feature Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <div className="border-4 border-black p-6 bg-white hover:bg-gray-100 transform transition duration-300">
-            <Heart className="w-10 h-10 mb-4 text-black" />
-            <h3 className="font-semibold mb-4 text-black">Kindness First</h3>
-            <p className="text-base text-gray-800">
-              Building technology that promotes compassion and understanding
-            </p>
-          </div>
-          <div className="border-4 border-black p-6 bg-white hover:bg-gray-100 transform transition duration-300">
-            <Shield className="w-10 h-10 mb-4 text-black" />
-            <h3 className="font-semibold mb-4 text-black">Fight Social Injustice</h3>
-            <p className="text-base text-gray-800">
-              Using AI to identify and address social inequalities
-            </p>
-          </div>
-          <div className="border-4 border-black p-6 bg-white hover:bg-gray-100 transform transition duration-300">
-            <Globe className="w-10 h-10 mb-4 text-black" />
-            <h3 className="font-semibold mb-4 text-black">Global Impact</h3>
-            <p className="text-base text-gray-800">
-              Creating positive change through innovative solutions
-            </p>
-          </div>
+        <div className="text-center">
+          <button
+            onClick={handleStart}
+            className="bg-black text-white text-2xl font-bold px-12 py-6 hover:bg-purple-600 transition-colors transform hover:-translate-y-1 hover:rotate-1"
+          >
+           Get Started →
+           <p style={{fontSize:"small"}}>Forging high-performing hooks and CTAs</p>
+          </button>
+          
         </div>
+      </div>
 
-        {/* Footer Section */}
-        <div className="mt-12 text-center text-black text-lg">
-          <p className="font-semibold text-lg">Crafted with Care by:</p>
-          <div className="flex flex-wrap justify-center gap-10 mt-6">
-            <a
-              href="https://www.findcoder.io/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-black hover:text-yellow-500 font-medium"
+      {/* Features Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-12 bg-white">
+  {/* Box 1 */}
+  <div className="neon-border bg-yellow-400 p-8 border-8 border-black transform hover:-translate-y-2 transition-transform">
+    <h3 className="text-2xl font-black mb-4 text-black">Objective</h3>
+    <p className="text-lg font-bold text-black">
+      Streamlining research for ad creation by automating data gathering and analysis.
+    </p>
+  </div>
+
+  {/* Box 2 */}
+  <div className="neon-border bg-pink-400 p-8 border-8 border-black transform hover:-translate-y-2 transition-transform">
+    <h3 className="text-2xl font-black mb-4 text-black">Key Features</h3>
+    <p className="text-lg font-bold text-black">
+      Comprehensive research automation and actionable insights for effective ads.
+    </p>
+  </div>
+
+  {/* Box 3 */}
+  <div className="neon-border bg-blue-400 p-8 border-8 border-black transform hover:-translate-y-2 transition-transform">
+    <h3 className="text-2xl font-black mb-4 text-black">User-Centric Interface</h3>
+    <p className="text-lg font-bold text-black">
+      Intuitive interface with clear input fields and visualization of insights.
+    </p>
+  </div>
+</div>
+
+
+
+      {/* Partners Section */}
+      <div className="bg-white p-12 border-t-8 border-black">
+        <h2 className="text-4xl font-black mb-12 text-center">POWERED BY</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[ 
+            { name: "FindCoder", bg: "bg-pink-400" },
+            { name: "AWS", bg: "bg-purple-500" },
+            { name: "DataStax", bg: "bg-blue-500" },
+          
+          ].map((partner) => (
+            <div
+              key={partner.name}
+              className={`${partner.bg} p-8 border-4 border-black transform hover:rotate-2 transition-transform`}
             >
-              FindCoder
-            </a>
-            <a
-              href="https://aws.amazon.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-black hover:text-yellow-500 font-medium"
-            >
-              AWS
-            </a>
-            <a
-              href="https://www.langflow.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-black hover:text-yellow-500 font-medium"
-            >
-              Langflow
-            </a>
-            <a
-              href="https://neusec.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-black hover:text-yellow-500 font-medium"
-            >
-              NeuSec
-            </a>
-          </div>
+             
+              <span className="text-2xl font-black text-black">{partner.name}</span>
+            </div>
+          ))}
+          
         </div>
+      </div>
 
-        {/* Start Button */}
-        <button
-          onClick={handleStart}  // Use the modified function to save to AsyncStorage
-          className="bg-yellow-500 text-black text-lg px-8 py-4 mt-8 flex items-center gap-4 hover:bg-yellow-400 transform transition-all duration-300 border-2 border-black"
-        >
-          START MAKING AN IMPACT
-          <ArrowRight />
-        </button>
+      {/* Footer */}
+      <div className="bg-black text-white p-8 text-center">
+        <p className="text-xl font-bold">© 2025 HOOKSMITH. All rights brutally reserved.</p>
       </div>
     </div>
   );
 };
 
 export default WelcomeScreen;
+ 

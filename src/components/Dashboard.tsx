@@ -1,130 +1,126 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles, Palette, Zap } from "lucide-react";
+import { postData } from "../apiService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-
   const [businessName, setBusinessName] = useState("");
   const [usp, setUsp] = useState("");
   const [category, setCategory] = useState("");
   const [errors, setErrors] = useState({ businessName: "", uspCategory: "" });
-
   const navigate = useNavigate();
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     setIsAnalyzing(true);
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      navigate("/impact-insights");
-    }, 2000);
-  };
+    console.log("insideApi");
+    const userData = { USP: usp, category };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    try {
+      // Make the API call to fetch insights
+      const response = await postData("fetch-insights", userData);
+      console.log(response);
 
-    // Basic Validation
-    if (!businessName) {
-      setErrors({ ...errors, businessName: "Business name is required" });
-    } else if (!usp && !category) {
-      setErrors({
-        ...errors,
-        uspCategory: "Either USP or category is required",
-      });
-    } else {
-      handleAnalyze();
+      if (response && response.analysis) {
+        console.log("Insights fetched successfully:", response);
+
+        // Directly store the analysis object in AsyncStorage
+        await AsyncStorage.setItem("analysis", JSON.stringify(response.analysis));
+        await AsyncStorage.setItem("reddit", JSON.stringify(response.reddit_results));
+        await AsyncStorage.setItem("youtube", JSON.stringify(response.youtube_results));
+
+        // Navigate to the insights page after storing data
+        navigate("/impact-insights");
+      } else {
+        alert(response.message || "An error occurred while fetching insights.");
+      }
+    } catch (error) {
+      console.error("Error during analysis:", error);
+      alert("An error occurred while analyzing. Please try again.");
+    } finally {
+      setIsAnalyzing(false); // Stop loading indicator
     }
   };
 
   return (
-    <div className="ml-64 p-8 w-full sm:ml-16 md:ml-32 lg:ml-64">
-      <div className="bg-white border-4 border-black p-6 mb-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-          <Sparkles /> Analyze Social Impact
-        </h2>
+    <div className="border-8 border-yellow-300 p-4">
+      <h2 className="bg-cyan-400 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none mb-10 p-5">
+        <span className="flex items-center gap-3 ">
+          <Sparkles className="w-6 h-6" />
+          ANALYZE SOCIAL IMPACT
+        </span>
+      </h2>
 
-        {/* Form for Business Information */}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-6">
-            {/* Business Name Input */}
-            <label htmlFor="businessName" className="block text-lg mb-2">
-              Business Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="businessName"
-              placeholder="Enter your business name (e.g., 'Social Impact Co.')"
-              value={businessName}
-              onChange={(e) => setBusinessName(e.target.value)}
-              className="w-full border-2 border-gray-300 rounded-lg p-4 text-xl font-mono focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-            />
-            {errors.businessName && (
-              <p className="text-red-500 text-sm mt-1">{errors.businessName}</p>
-            )}
-          </div>
+      <div>
+        <label className="block text-lg font-black mb-2 bg-yellow-400 p-1 inline-block">
+          <Palette className="w-5 h-5 inline-block mr-2" />
+          Business Name *
+        </label>
+        <input
+          type="text"
+          value={businessName}
+          onChange={(e) => setBusinessName(e.target.value)}
+          className="w-full border-4 border-gray-700 p-3 text-lg font-bold bg-gray-100 focus:outline-none focus:bg-white"
+          placeholder="Enter your business name"
+        />
+        {errors.businessName && (
+          <p className="text-white font-bold mt-2 bg-red-400 p-2 inline-block">
+            {errors.businessName}
+          </p>
+        )}
+      </div>
 
-          <div className="mb-6">
-            {/* USP Input */}
-            <label htmlFor="usp" className="block text-lg mb-2">
-              Unique Selling Proposition (USP){" "}
-              <span className="text-gray-500">(Optional)</span>
-            </label>
-            <input
-              type="text"
-              id="usp"
-              placeholder="Enter your USP (e.g., 'Eco-friendly products')"
-              value={usp}
-              onChange={(e) => setUsp(e.target.value)}
-              className="w-full border-2 border-gray-300 rounded-lg p-4 text-xl font-mono focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-            />
-          </div>
+      <div>
+        <label className="block text-lg font-black mb-2 bg-yellow-400 p-1 inline-block">
+          <Zap className="w-5 h-5 inline-block mr-2" />
+          Unique Selling Proposition
+        </label>
+        <input
+          type="text"
+          value={usp}
+          onChange={(e) => setUsp(e.target.value)}
+          className="w-full border-4 border-gray-700 p-3 text-lg font-bold bg-indigo-100 focus:outline-none focus:bg-white"
+          placeholder="What makes you unique?"
+        />
+      </div>
 
-          <div className="mb-6">
-            {/* Category Input */}
-            <label htmlFor="category" className="block text-lg mb-2">
-              Business Category{" "}
-              <span className="text-gray-500">(Optional)</span>
-            </label>
-            <input
-              type="text"
-              id="category"
-              placeholder="Enter your business category (e.g., 'Non-profit')"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full border-2 border-gray-300 rounded-lg p-4 text-xl font-mono focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-            />
-          </div>
+      <div>
+        <label className="block text-lg font-black mb-2 bg-yellow-500 p-1 inline-block">
+          Business Category
+        </label>
+        <input
+          type="text"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full border-4 border-gray-700 p-3 text-lg font-bold bg-yellow-100 focus:outline-none focus:bg-white"
+          placeholder="e.g., Non-profit, Tech, Healthcare"
+        />
+      </div>
 
-          {/* Error message for USP or Category */}
-          {errors.uspCategory && (
-            <p className="text-red-500 text-sm mt-2">{errors.uspCategory}</p>
+      {errors.uspCategory && (
+        <p className="text-white font-bold bg-red-500 p-2 inline-block">
+          {errors.uspCategory}
+        </p>
+      )}
+
+      <div className="text-center mt-6">
+        <button
+          onClick={() => handleAnalyze()}
+          disabled={isAnalyzing}
+          className={`${
+            isAnalyzing ? "bg-gray-400" : "bg-purple-400 hover:bg-yellow-700"
+          } text-white font-black text-lg px-6 py-3 border-4 border-gray-700 inline-flex items-center gap-2`}
+        >
+          {isAnalyzing ? (
+            "ANALYZING..."
+          ) : (
+            <>
+              <Search className="w-6 h-6" />
+              ANALYZE IMPACT
+            </>
           )}
-
-          {/* Analyze Button */}
-          <div className="text-center mb-6">
-            <button
-              type="submit"
-             
-              className={`${
-                isAnalyzing
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-pink-500 hover:bg-pink-600"
-              } border-4 border-black px-8 py-2 font-bold flex items-center gap-2`}
-            >
-              {isAnalyzing ? (
-                "Analyzing..."
-              ) : (
-                <>
-                  <Search /> Analyze Impact
-                </>
-              )}
-            </button>
-            <div className="text-center text-gray-500 py-2">
-              Enter your business details and click "Analyze Impact" to see
-              insights.
-            </div>
-          </div>
-        </form>
+        </button>
       </div>
     </div>
   );

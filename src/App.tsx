@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import ImpactInsights from "./components/ImpactInsights";
-
 import SignInPage from "./Auth/SignInPage";
 import SignUpPage from "./Auth/SignUpPage";
 import WelcomeScreen from "./components/WelcomeScreen";
@@ -36,32 +35,30 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="flex flex-col h-screen">
-        {/* If not welcomed yet, show WelcomeScreen */}
+      <div className="bg-gray-100 min-h-screen">
         {!isWelcome ? (
           <WelcomeScreen onStart={() => setIsWelcome(true)} />
         ) : (
-          // Once user has passed the WelcomeScreen
           <>
-            {/* If authenticated, show the main app content, otherwise show sign-in/signup */}
             {isAuthenticated ? (
-              <div className="flex flex-1">
-                <Sidebar />
-                <div className="flex flex-1">
+              <div className="flex flex-row">
+                <div className=" w-1/5 h-1/6 text-white">
+                  <Sidebar />
+                </div>
+                <div className="flex-grow p-3">
                   <Routes>
                     <Route path="/Dashboard" element={<Dashboard />} />
                     <Route path="/impact-insights" element={<ImpactInsights />} />
-                    <Route path="*" element={<Navigate to="/Dashboard" />} /> {/* Fallback route */}
+                    <Route path="*" element={<Navigate to="/Dashboard" />} />
                   </Routes>
                 </div>
               </div>
             ) : (
-              // Redirect to SignInPage or SignUpPage if not authenticated
-              <div>
+              <div className="flex items-center justify-center min-h-screen">
                 <Routes>
                   <Route path="/" element={<SignInPage />} />
                   <Route path="/signup" element={<SignUpPage />} />
-                  <Route path="*" element={<Navigate to="/" />} /> {/* Fallback route */}
+                  <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </div>
             )}
