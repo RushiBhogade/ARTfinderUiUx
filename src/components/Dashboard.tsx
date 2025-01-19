@@ -9,7 +9,7 @@ const Dashboard = () => {
   const [businessName, setBusinessName] = useState("");
   const [usp, setUsp] = useState("");
   const [category, setCategory] = useState("");
-  const [errors, setErrors] = useState({ businessName: "", uspCategory: "" });
+  const [errors,] = useState({ businessName: "", uspCategory: "" });
   const navigate = useNavigate();
 
   const handleAnalyze = async () => {
