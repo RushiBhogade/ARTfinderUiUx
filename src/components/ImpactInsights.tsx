@@ -57,7 +57,6 @@ const ImpactInsights: React.FC = () => {
       <div className="ml-64 p-8 w-full">
         <ContentIdeas contentIdeas={data.content_ideas} />
         <CtaSuggestions ctaSuggestions={data.cta_suggestions} />
-        <WordCloudScreen />
         <KeyTriggers keyTriggers={data.key_triggers} />
         <RecommendedHooks recommendedHooks={data.recommended_hooks} />
         <SentimentSummary sentimentSummary={data.sentiment_summary} />

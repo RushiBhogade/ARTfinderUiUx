@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Set up base URL for your API
-const BASE_URL = 'http://hooksmithb.neusec.in/';
+const BASE_URL = 'https://hooksmithb.neusec.in/';
 
 // Create a helper function to get the JWT token from AsyncStorage
 const getAuthToken = async () => {
